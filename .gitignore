@@ -8,7 +8,7 @@ App_Data/
 *.suo
 *.vspscc
 *.vssscc
-
+.vs/
 # Arquivos de log e temporários
 *.log
 *.tlog
