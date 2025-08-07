@@ -58,3 +58,4 @@ _ReSharper*/
 # Arquivos do sistema (macOS, Windows)
 .DS_Store
 Thumbs.db
+/.vs/ToDo-App/FileContentIndex
