@@ -14,26 +14,10 @@ namespace Backend.Repositories
             _connectionString = ConfigurationManager.ConnectionStrings["DefaultConnection"].ConnectionString;
         }
 
-        //ADICIONANDO LOG DE ERRO
-        private void LogError(Exception ex)
-        {
-            try
-            {
-                var logPath = AppDomain.CurrentDomain.BaseDirectory + "error.log";
-                var message = $"{DateTime.Now}: {ex.Message} - {ex.StackTrace}\n";
-                file.AppendAllText(logPath, message);
-            }
-            catch
-            {
-                // Se falhar ao logar, não fazer nada para evitar loop infinito
-            }
-        }
 
         // ADICIONANDO ITEM NO BANCO
         public void AddTodoItem(TodoItem item)
         {
-            try
-            {
                 using (var connection = new NpgsqlConnection(_connectionString))
                 {
                     connection.Open();
@@ -46,19 +30,11 @@ namespace Backend.Repositories
                         command.ExecuteNonQuery();
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                LogError(ex);
-                throw; // Relança a exceção após logar para que o chamador possa lidar com ela
-            }
         }
 
         //ATUALIZANDO ITEM
         public void UpdateTodoItem(TodoItem item)
         {
-            try
-            {
                 using (var connection = new NpgsqlConnection(_connectionString))
                 {
                     connection.Open();
@@ -72,19 +48,11 @@ namespace Backend.Repositories
                         command.ExecuteNonQuery();
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                LogError(ex);
-                throw; // Relança a exceção após logar para que o chamador possa lidar com ela
-            }
         }
 
         //PEGANDO TODOS OS ITENS DO BANCO
         public List<TodoItem> GetAllTodoItems()
         {
-            try
-            {
                 var items = new List<TodoItem>();
                 using (var connection = new NpgsqlConnection(_connectionString))
                 {
@@ -107,19 +75,11 @@ namespace Backend.Repositories
                     }
                 }
                 return items;
-            }
-            catch (Exception ex)
-            {
-                LogError(ex);
-                throw; // Relança a exceção após logar para que o chamador possa lidar com ela
-            }
         }
 
         //PEGANDO ITEM POR ID
         public TodoItem GetTodoItemById(Guid id)
         {
-            try
-            {
                 using (var connection = new NpgsqlConnection(_connectionString))
                 {
                     connection.Open();
@@ -143,20 +103,12 @@ namespace Backend.Repositories
                     }
                 }
                 return null; // Retorna null se o item não for encontrado
-            }
-            catch (Exception ex)
-            {
-                LogError(ex);
-                throw; // Relança a exceção após logar para que o chamador possa lidar com ela
-            }
         }
 
 
         //DELETANDO ITEM
         public void DeleteTodoItem(Guid id)
         {
-            try
-            {
                 using (var connection = new NpgsqlConnection(_connectionString))
                 {
                     connection.Open();
@@ -166,12 +118,6 @@ namespace Backend.Repositories
                         command.ExecuteNonQuery();
                     }
                 }
-            }
-            catch (Exception ex)
-            {
-                LogError(ex);
-                throw; // Relança a exceção após logar para que o chamador possa lidar com ela
-            }
         }
     }
 }

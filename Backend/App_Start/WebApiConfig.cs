@@ -9,7 +9,8 @@ namespace Backend
     {
         public static void Register(HttpConfiguration config)
         {
-            // Configuração e serviços de API Web
+            // Filtros globais
+            config.Filters.Add(new GlobalExceptionFilter());
 
             // Rotas de API Web
             config.MapHttpAttributeRoutes();

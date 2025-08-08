@@ -6,6 +6,7 @@ using System.Web.Http;
 
 namespace Backend.Controllers
 {
+    [RoutePrefix("api/todo")]
     public class TodoController : ApiController
     {
         private readonly ITodoRepository _todoRepository;
@@ -15,7 +16,16 @@ namespace Backend.Controllers
             _todoRepository = new ToDoRepository();
         }
 
-        // ADICIONANDO ITEM NO BANCO
+        public TodoController(ITodoRepository todoRepository)
+        {
+            _todoRepository = todoRepository;
+        }
+
+        /// <summary>
+        /// Adicionando uma tarefa no banco de dados
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns>Tarefa Criada</returns>
         [HttpPost]
         public IHttpActionResult AddTodoItem([FromBody] TodoItem item)
         {
@@ -27,14 +37,21 @@ namespace Backend.Controllers
             return CreatedAtRoute("DefaultApi", new { id = item.Id }, item);
         }
 
-        //PEGANDO TODOS OS ITENS DO BANCO
+        /// <summary>
+        /// Mostrando toda a lista de Tarefas do banco de dados
+        /// </summary>
+        /// <returns>Tarefas Retornadas</returns>
         [HttpGet]
         public IEnumerable<TodoItem> GetAllTodoItems()
         {
             return _todoRepository.GetAllTodoItems();
         }
 
-        //PEGANDO ITEM POR ID
+        /// <summary>
+        /// Imprimindo uma tarefa específica do banco de dados
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Tarefa Retornada</returns>
         [HttpGet]
         public IHttpActionResult GetTodoItemById(Guid id)
         {
@@ -46,7 +63,12 @@ namespace Backend.Controllers
             return Ok(item);
         }
 
-        //ATUALIZANDO ITEM
+        /// <summary>
+        /// Atualizando um item do banco de dados
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="item"></param>
+        /// <returns>Tarefa Atualizada</returns>
         [HttpPut]
         public IHttpActionResult UpdateTodoItem(Guid id, [FromBody] TodoItem item)
         {
@@ -62,12 +84,28 @@ namespace Backend.Controllers
             return Ok(item);
         }
 
-        //DELETANDO ITEM
+        /// <summary>
+        /// Deletando um item do banco de dados
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Tarefa Deletada</returns>
         [HttpDelete]
         public IHttpActionResult DeleteTodoItem(Guid id)
         {
             _todoRepository.DeleteTodoItem(id);
             return StatusCode(System.Net.HttpStatusCode.NoContent);
+        }
+
+        /// <summary>
+        /// Teste para o GlobalExceptionFilter
+        /// </summary>
+        /// <returns>Teste Completo</returns>
+        /// <exception cref="Exception"></exception>
+        [HttpGet]
+        [Route("test/throw")]
+        public IHttpActionResult ThrowException()
+        {
+            throw new Exception("Erro de teste para o GlobalExceptionFilter");
         }
     }
 }
