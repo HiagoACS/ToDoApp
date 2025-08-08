@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="pt-BR" ng-app="todoApp">
+
+<head>
+	<meta charset="utf-8">
+	<title>ToDo App - AngularJS</title>
+	<link rel="stylesheet" href="css/style.css">
+
+	<!-- Carregando o AngularJS -->
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+
+	<!-- Arquivos -->
+	<script src="app.js"></script>
+	<script src="js/todoController.js"></script>
+</head>
+
+<body ng-controller="todoController as vm">
+
+	<h1>Tarefa</h1>
+
+	<ul>
+		<li ng-repeat="todo in vm.todos">
+			{{ todo.Title }} - <strong>{{ todo.IsCompleted ? 'Concluída' : 'Pendente' }}</strong>
+		</li>
+	</ul>
+</body>
+</html>
