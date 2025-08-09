@@ -1,27 +1,69 @@
 <!DOCTYPE html>
 <html lang="pt-BR" ng-app="todoApp">
-
 <head>
-	<meta charset="utf-8">
-	<title>ToDo App - AngularJS</title>
-	<link rel="stylesheet" href="css/style.css">
-
-	<!-- Carregando o AngularJS -->
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
-
-	<!-- Arquivos -->
-	<script src="app.js"></script>
-	<script src="js/todoController.js"></script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ToDo App - AngularJS</title>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
+<body>
+  <div class="app" ng-controller="todoController as vm">
+    <!-- (mesmo markup que já usamos) -->
+    <header>
+      <h1>ToDo App</h1>
+      <div class="controls">
+        <div class="muted">Salvamento local (localStorage)</div>
+        <button class="btn secondary" ng-click="vm.clearAll()">Limpar tudo</button>
+      </div>
+    </header>
 
-<body ng-controller="todoController as vm">
+    <div class="input-wrap">
+      <input class="new-todo" type="text" ng-model="vm.newTodoTitle" placeholder="O que você precisa fazer?" ng-keypress="vm.keyPressed($event)" />
+      <button class="btn" ng-click="vm.addTodo()">Adicionar</button>
+    </div>
 
-	<h1>Tarefa</h1>
+    <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <div class="filter-row">
+        <div class="chip" ng-class="{active: vm.filterMode==='all'}" ng-click="vm.setFilter('all')">Todas</div>
+        <div class="chip" ng-class="{active: vm.filterMode==='active'}" ng-click="vm.setFilter('active')">Ativas</div>
+        <div class="chip" ng-class="{active: vm.filterMode==='completed'}" ng-click="vm.setFilter('completed')">Concluídas</div>
+      </div>
 
-	<ul>
-		<li ng-repeat="todo in vm.todos">
-			{{ todo.Title }} - <strong>{{ todo.IsCompleted ? 'Concluída' : 'Pendente' }}</strong>
-		</li>
-	</ul>
+      <div class="meta">
+        <div>{{ vm.remainingCount() }} pendente(s)</div>
+        <div>{{ vm.totalCount() }} total</div>
+        <button class="chip" ng-click="vm.clearCompleted()">Limpar concluídas</button>
+      </div>
+    </div>
+
+    <div class="list" ng-if="vm.visibleTodos().length">
+      <div class="todo" ng-repeat="todo in vm.visibleTodos() track by todo.Id" ng-class="{completed: todo.IsCompleted}">
+        <div class="left">
+          <input type="checkbox" ng-checked="todo.IsCompleted" ng-click="vm.toggleComplete(todo)" />
+          <div ng-class="{'title':true, 'editing': vm.editing === todo.Id}">
+            <span ng-if="vm.editing !== todo.Id" ng-dblclick="vm.startEdit(todo)">{{todo.Title}}</span>
+            <input ng-if="vm.editing === todo.Id" type="text" ng-model="vm.editText" ng-blur="vm.saveEdit(todo)" ng-keydown="vm.editKey($event, todo)" autofocus />
+          </div>
+        </div>
+
+        <div class="right">
+          <div class="muted">{{ todo.IsCompleted ? 'Concluída' : 'Pendente' }}</div>
+          <button class="chip" ng-click="vm.startEdit(todo)">Editar</button>
+          <button class="chip" ng-click="vm.remove(todo)" style="border-color:rgba(255,0,0,0.06);color:rgb(255,107,107)">Remover</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="empty" ng-if="!vm.visibleTodos().length">
+      <div style="font-weight:600;margin-bottom:6px">Nenhuma tarefa</div>
+      <div>Adicione uma tarefa no campo acima para começar</div>
+    </div>
+  </div>
+
+  <!-- scripts no final do body (ordem IMPORTA) -->
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/todoStorageService.js"></script>
+  <script src="js/todoController.js"></script>
 </body>
 </html>
