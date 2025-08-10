@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http;
+using System.Web.Http.Cors;
 
 namespace Backend
 {
@@ -9,6 +10,11 @@ namespace Backend
     {
         public static void Register(HttpConfiguration config)
         {
+
+            // Configuração do CORS para permitir requisições de qualquer origem
+            var cors = new EnableCorsAttribute("*", "*", "*");
+            config.EnableCors(cors);
+
             // Filtros globais
             config.Filters.Add(new GlobalExceptionFilter());
 

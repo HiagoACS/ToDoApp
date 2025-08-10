@@ -1,4 +1,4 @@
-angular.module('todoApp').controller('todoController', ['todoStorage', '$window', '$timeout', function(todoStorage, $window, $timeout){
+angular.module('todoApp').controller('todoController', ['todoService', '$window', '$timeout', function(todoService, $window, $timeout){
   var vm = this;
 
   // estado
@@ -8,50 +8,53 @@ angular.module('todoApp').controller('todoController', ['todoStorage', '$window'
   vm.editing = null;
   vm.editText = '';
 
-  function guid(){ return 'id-' + Math.random().toString(36).slice(2,9); }
-
   vm.load = function(){
-    var saved = todoStorage.load();
-    if(saved && saved.length){
-      vm.todos = saved;
-    } else {
-      vm.todos = [
-        { Id: guid(), Title: 'Aprender AngularJS', IsCompleted:false },
-        { Id: guid(), Title: 'Preparar backend .NET', IsCompleted:true }
-      ];
-      todoStorage.save(vm.todos);
-    }
+    todoService.getTodos().then(function(response){
+      vm.todos = response.data;
+    }, function(error){
+      console.error('Erro ao carregar tarefas:', error)
+    });
   };
-
-  vm.save = function(){ todoStorage.save(vm.todos); };
 
   vm.addTodo = function(){
     var title = (vm.newTodoTitle || '').trim();
     if(!title) return;
-    vm.todos.unshift({ Id: guid(), Title: title, IsCompleted:false });
-    vm.newTodoTitle = '';
-    vm.save();
+    var newTodo = {Title : title, IsCompleted: false};
+    todoService.addTodo(newTodo).then(function(response){ 
+      vm.todos.unshift(response.data);
+      vm.newTodoTitle = '';
+    }, function(error){
+      console.error('Erro ao adicionar tarefa:', error);
+    });
   };
 
   vm.remove = function(todo){
-    var i = vm.todos.indexOf(todo);
-    if(i>-1){ vm.todos.splice(i,1); vm.save(); }
+    todoService.deleteTodo(todo.Id).then(function(){
+      var i = vm.todos.indexOf(todo);
+      if(i > -1) vm.todos.splice(i,1);
+    }, function(error){
+      console.error('Erro ao remover tarefa:', error);
+    });
   };
 
   vm.toggleComplete = function(todo){
     todo.IsCompleted = !todo.IsCompleted;
-    vm.save();
+    todoService.updateTodo(todo).then(function(){}, function(error){
+      console.error('Erro ao atualizar tarefa:', error);
+    });
   };
 
   vm.clearCompleted = function(){
-    vm.todos = vm.todos.filter(function(t){ return !t.IsCompleted; });
-    vm.save();
+    todoService.deleteCompleted().then(function(){
+      vm.load();
+    });
   };
 
   vm.clearAll = function(){
     if($window.confirm('Remover todas as tarefas? Isso não pode ser desfeito.')){
-      vm.todos = [];
-      vm.save();
+      todoService.deleteAll().then(function(){
+        vm.load();
+      });
     }
   };
 
@@ -67,10 +70,14 @@ angular.module('todoApp').controller('todoController', ['todoStorage', '$window'
   vm.saveEdit = function(todo){
     var text = (vm.editText || '').trim();
     if(!text) vm.remove(todo);
-    else todo.Title = text;
+    else {
+      todo.Title = text;
+      todoService.updateTodo(todo).then(function(){}, function(error){
+        console.error('Erro ao salvar edição:', error)
+      });
+    }
     vm.editing = null;
     vm.editText = '';
-    vm.save();
   };
 
   vm.editKey = function(e, todo){

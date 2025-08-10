@@ -1,7 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\Controllers"
+    "\\App_Start",
+    "\\Controllers",
+    "\\Repositories"
   ],
+  "SelectedNode": "\\Controllers\\TodoController.cs",
   "PreviewInSolutionExplorer": false
 }

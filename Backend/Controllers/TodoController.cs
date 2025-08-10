@@ -3,6 +3,7 @@ using Backend.Models;
 using Backend.Repositories;
 using System.Collections.Generic;
 using System.Web.Http;
+using System.Linq;
 
 namespace Backend.Controllers
 {
@@ -97,15 +98,35 @@ namespace Backend.Controllers
         }
 
         /// <summary>
-        /// Teste para o GlobalExceptionFilter
+        /// Deletando todas as tarefas completadas do banco de dados
         /// </summary>
-        /// <returns>Teste Completo</returns>
-        /// <exception cref="Exception"></exception>
-        [HttpGet]
-        [Route("test/throw")]
-        public IHttpActionResult ThrowException()
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("deleteallcompleted")]
+        public IHttpActionResult DeleteCompleted()
         {
-            throw new Exception("Erro de teste para o GlobalExceptionFilter");
+            var completedTodos = _todoRepository.GetAllTodoItems().Where(t => t.IsCompleted).ToList();
+            foreach (var todo in completedTodos)
+            {
+                _todoRepository.DeleteTodoItem(todo.Id);
+            }
+            return Ok();
+        }
+
+        /// <summary>
+        /// Deletando todas as tarefas do banco de dados
+        /// </summary>
+        /// <returns></returns>
+        [HttpDelete]
+        [Route("deleteall")]
+        public IHttpActionResult DeleteAll()
+        {
+            var allTodos = _todoRepository.GetAllTodoItems();
+            foreach (var todo in allTodos)
+            {
+                _todoRepository.DeleteTodoItem(todo.Id);
+            }
+            return Ok();
         }
     }
 }
