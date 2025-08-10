@@ -14,7 +14,7 @@ O objetivo deste projeto é fornecer uma base sólida para entender como integrar 
 
 - Backend baseado em **.NET Framework 4.6** com ASP.NET Web API clássica.
 - Acesso ao banco PostgreSQL feito manualmente via ADO.NET com driver Npgsql, sem Entity Framework.
-- Frontend construído com **AngularJS 1.x**, um framework anterior ao Angular moderno, adotando conceitos de controllers e data binding.
+- Frontend construído com **AngularJS 1.8.3**, um framework anterior ao Angular moderno, adotando conceitos de controllers e data binding.
 - Arquitetura tradicional MVC/Web API com controllers, models e serviços.
 
 ## Tecnologias Utilizadas
